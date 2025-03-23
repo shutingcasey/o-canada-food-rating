@@ -10,34 +10,38 @@ import {
   renderCards
 } from "./view.js";
 
+import { searchProducts } from "./search.js"; // 引入 Hybrid Search 函式
+
 let allData = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // 讀取資料
+  // 讀取所有資料
   allData = await loadData();
 
-  // 取得分類與品牌列表
-  const categories = getCategories(allData);
-  const brands = getBrands(allData);
+  // 初始化下拉選單
+  renderDropdown("categoryFilter", getCategories(allData));
+  renderDropdown("brandFilter", getBrands(allData));
 
-  // 渲染下拉選單
-  renderDropdown("categoryFilter", categories);
-  renderDropdown("brandFilter", brands);
-
-  // 初次渲染全部卡片
+  // 預設顯示全部商品
   renderCards(allData);
 
-  // 綁定事件（篩選）
-  document
-    .getElementById("categoryFilter")
-    .addEventListener("change", applyFilter);
+  // Category / Brand 篩選功能（原本的）
+  document.getElementById("categoryFilter").addEventListener("change", applyFilter);
+  document.getElementById("brandFilter").addEventListener("change", applyFilter);
 
-  document
-    .getElementById("brandFilter")
-    .addEventListener("change", applyFilter);
+  // Hybrid Search 搜尋欄位（新的）
+  document.getElementById("hybridSearchButton").addEventListener("click", () => {
+    const keyword = document.getElementById("hybridSearchInput").value.trim();
+    if (keyword) {
+      const results = searchProducts(allData, keyword);
+      renderCards(results);
+    } else {
+      renderCards(allData); // 空白就顯示全部
+    }
+  });
 });
 
-// 根據兩個篩選器值篩選資料
+// 篩選處理函式（只處理 Category 和 Brand）
 function applyFilter() {
   const selectedCategory = document.getElementById("categoryFilter").value;
   const selectedBrand = document.getElementById("brandFilter").value;
