@@ -11,7 +11,9 @@ import {
   renderLoadingSkeleton
 } from "./view.js";
 
-import { searchProducts } from "./search.js";
+import { 
+  searchProducts 
+} from "./search.js";
 
 let allData = [];
 
