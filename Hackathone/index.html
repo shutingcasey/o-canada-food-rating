@@ -15,22 +15,39 @@
   </header>
 
   <section class="filters">
-    <label for="categoryFilter">Filter by Category:</label>
-    <select id="categoryFilter"></select>
 
-    <label for="brandFilter">Brand:</label>
-    <select id="brandFilter"></select>
+  <div class="main-container">
 
+  <div class="search-bar">
     <input
     type="text"
     id="hybridSearchInput"
-    placeholder="Search by name, category, or brand..."
+    placeholder="Search by product name"
     />
-    <button id="hybridSearchButton">Search</button>
+    <button id="hybridSearchButton">AI Search</button>
+  </div>
+  
+  <div class="filter-bar">
+
+  <label for="categoryFilter">Filter by Category:</label>
+  <select id="categoryFilter"></select>
+
+  <label for="brandFilter">Brand:</label>
+  <select id="brandFilter"></select>
+  </div>
 
   </section>
 
   <section id="productContainer" class="card-container"></section>
+
+ </div>
+ 
+ <div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="modalClose" class="modal-close">&times;</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
 
   <!-- 主控制腳本 -->
   <script type="module" src="js/controller.js"></script>
