@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Step 1：先顯示假卡片
     renderLoadingSkeleton();
 
-    // Step 2：延遲 2 秒再進行搜尋與渲染
+    // Step 2：延遲再進行搜尋與渲染
     setTimeout(() => {
       if (keyword) {
         const results = searchProducts(allData, keyword);
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         renderCards(allData);
       }
-    }, 4000); // 2 秒延遲
+    }, 4000); 
   });
 
   // Modal 關閉邏輯
