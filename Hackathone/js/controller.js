@@ -73,11 +73,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 4000); 
   });
 
-  // Modal 關閉邏輯
+  // 產品Detail  關閉邏輯-關閉按鈕
   document.getElementById("modalClose").addEventListener("click", () => {
     document.getElementById("modal").classList.add("hidden");
   });
 
+  // 產品Detail 關閉邏輯-點擊背景區域
   document.getElementById("modal").addEventListener("click", (e) => {
     if (e.target.id === "modal") {
       document.getElementById("modal").classList.add("hidden");
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// 篩選器邏輯（只處理 category + brand，不處理 keyword）
+// 篩選器邏輯
 function applyFilter() {
   const selectedCategory = document.getElementById("categoryFilter").value;
   const selectedBrand = document.getElementById("brandFilter").value;
