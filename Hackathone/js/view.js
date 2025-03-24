@@ -21,7 +21,7 @@ export function renderDropdown(selectId, options) {
 }
 
 // 顯示 Loading Skeleton 效果（假卡片）
-export function renderLoadingSkeleton(count = 6) {
+export function renderLoadingSkeleton(count = 10) {
   const container = document.getElementById("productContainer");
   container.innerHTML = "";
 

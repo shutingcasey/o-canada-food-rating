@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("hybridSearchButton").addEventListener("click", () => {
     const keyword = document.getElementById("hybridSearchInput").value.trim();
 
+    // Step 1：先顯示假卡片
+    renderLoadingSkeleton();
+
+    // Step 2：延遲 2 秒再進行搜尋與渲染
     setTimeout(() => {
       if (keyword) {
         const results = searchProducts(allData, keyword);
@@ -45,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         renderCards(allData);
       }
-    }, 300); // 模擬延遲，讓效果更自然
+    }, 4000); // 2 秒延遲
   });
 
   // Modal 關閉邏輯
