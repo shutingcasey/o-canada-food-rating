@@ -2,9 +2,11 @@ function normalize(text) {
   return text.toLowerCase();
 }
 
+// Expanded to handle phrase-level synonyms
 const synonymMap = {
   milk: ["dairy"],
-  dairy: ["milk"]
+  dairy: ["milk"],
+  "locally produced dairy": ["milk", "canadian", "product_of_canada"]
 };
 
 function expandTerms(terms) {
@@ -19,8 +21,16 @@ function expandTerms(terms) {
 }
 
 export function searchProducts(data, query) {
-  const baseTerms = normalize(query).split(/\s+/);
-  const terms = expandTerms(baseTerms);
+  const normalizedQuery = normalize(query);
+
+  // Check for full phrase matches first
+  const phraseMatches = Object.keys(synonymMap).filter((phrase) =>
+    normalizedQuery.includes(phrase)
+  );
+
+  const baseTerms = normalizedQuery.split(/\s+/);
+  const allTerms = [...baseTerms, ...phraseMatches];
+  const terms = expandTerms(allTerms);
 
   return data
     .map((item) => {
@@ -37,7 +47,7 @@ export function searchProducts(data, query) {
 
       const textMatch = terms.some((term) => fields.includes(term));
 
-      const isCanadianQuery = baseTerms.includes("canada") || baseTerms.includes("canadian");
+      const isCanadianQuery = terms.includes("canada") || terms.includes("canadian") || terms.includes("product_of_canada");
       const canadianMatch = isCanadianQuery && item.product_of_canada === true;
 
       const matched = textMatch || canadianMatch;
@@ -53,7 +63,6 @@ export function searchProducts(data, query) {
     })
     .map((entry) => entry.item);
 }
-
 
 
 // // 搜尋欄位用的簡單詞彙同義詞
