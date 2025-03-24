@@ -33,6 +33,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("categoryFilter").addEventListener("change", applyFilter);
   document.getElementById("brandFilter").addEventListener("change", applyFilter);
 
+  // 監聽 Enter 鍵觸發搜尋
+  document.getElementById("hybridSearchInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      const keyword = event.target.value.trim();
+
+      renderLoadingSkeleton();
+
+      setTimeout(() => {
+        if (keyword) {
+          const results = searchProducts(allData, keyword);
+          const keywords = keyword.toLowerCase().split(/\s+/);
+          renderCards(results, keywords);
+        } else {
+          renderCards(allData);
+        }
+      }, 4000);
+    }
+  });
+
   // 監聽 Hybrid 搜尋按鈕
   document.getElementById("hybridSearchButton").addEventListener("click", () => {
     const keyword = document.getElementById("hybridSearchInput").value.trim();

@@ -732,7 +732,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -894,7 +894,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1020,7 +1020,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1038,7 +1038,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1056,7 +1056,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1110,7 +1110,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1128,7 +1128,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -1218,7 +1218,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -2136,7 +2136,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -2712,7 +2712,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -2730,7 +2730,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -2748,7 +2748,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -2892,7 +2892,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -3468,7 +3468,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -3612,7 +3612,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -4008,7 +4008,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -4044,7 +4044,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Other",
     "rating": 100,
     "CFIA": true
@@ -4296,7 +4296,7 @@
     "ufcw_brand": false,
     "made_in_ca_list": false,
     "non_canadian_brand": true,
-    "canadian_brand": true,
+    "canadian_brand": false,
     "category": "Produce",
     "rating": 100,
     "CFIA": true

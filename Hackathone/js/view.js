@@ -63,26 +63,46 @@ export function renderCards(data, keywords = []) {
 
       <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
       <p><strong>Category:</strong> ${item.category}</p>
-      <p><strong>Country:</strong> ${item.country || "N/A"}</p>
+      <p><strong>Country of Origin:</strong> ${item.country || "N/A"}</p>
 
-      <p><strong>Product of Canada:</strong> ${
-        item.product_of_canada ? "✅ Product of Canada" : "❌ Not Canadian"
-      }</p>
-      <p><strong>Made in Canada:</strong> ${
-        item.made_in_canada ? "✅ Made in Canada" : "❌ Not Canadian"
-      }</p>
-      <p><strong>Prepared in Canada:</strong> ${
-        item.prepared_in_canada ? "✅ Prepared in Canada" : "❌ Not Canadian"
-      }</p>
+      ${item.product_of_canada ? `<p><strong>Product of Canada:</strong> ✅ Product of Canada</p>` : ""}
+      ${item.made_in_canada ? `<p><strong>Made in Canada:</strong> ✅ Made in Canada</p>` : ""}
+      ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
 
-      <p class="canadian-level">
-      Rating:${levelText}</p>
-      
+      <p class="canadian-level">Rating: ${levelText}</p>
+
       <p class="canadian-score">
         🇨🇦 Canadian Score: ${item.rating || "N/A"}
       </p>
-      
     `;
+
+
+    // card.innerHTML = `
+    //   <img src="${item.productImage}" alt="${item.title}" />
+    //   <h3>${item.title}</h3>
+
+    //   <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
+    //   <p><strong>Category:</strong> ${item.category}</p>
+    //   <p><strong>Country:</strong> ${item.country || "N/A"}</p>
+
+    //   <p><strong>Product of Canada:</strong> ${
+    //     item.product_of_canada ? "✅ Product of Canada" : "❌ Not Canadian"
+    //   }</p>
+    //   <p><strong>Made in Canada:</strong> ${
+    //     item.made_in_canada ? "✅ Made in Canada" : "❌ Not Canadian"
+    //   }</p>
+    //   <p><strong>Prepared in Canada:</strong> ${
+    //     item.prepared_in_canada ? "✅ Prepared in Canada" : "❌ Not Canadian"
+    //   }</p>
+
+    //   <p class="canadian-level">
+    //   Rating:${levelText}</p>
+      
+    //   <p class="canadian-score">
+    //     🇨🇦 Canadian Score: ${item.rating || "N/A"}
+    //   </p>
+      
+    // `;
 
     // 點擊卡片 → 開啟詳細 modal
     card.addEventListener("click", () => {
@@ -102,27 +122,54 @@ export function renderCards(data, keywords = []) {
       modalBody.innerHTML = `
         <h2>${item.title}</h2>
         <img src="${item.productImage}" alt="${item.title}" style="width:100%; max-height:200px; object-fit:contain;">
-
+      
         <div class="modal-info">
           <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
           <p><strong>Category:</strong> ${item.category}</p>
           <p><strong>Country:</strong> ${item.country || "N/A"}</p>
           <p><strong>Description:</strong> ${item.description || "No description available."}</p>
         </div>
-
+      
         <div class="modal-flags">
-          <div class="flag"><strong>Product of Canada:</strong> ${item.product_of_canada ? "✅ Yes" : "❌ No"}</div>
-          <div class="flag"><strong>Made in Canada:</strong> ${item.made_in_canada ? "✅ Yes" : "❌ No"}</div>
-          <div class="flag"><strong>Prepared:</strong> ${item.prepared_in_canada ? "✅ Yes" : "❌ No"}</div>
-          <div class="flag"><strong>UFCW Brand:</strong> ${item.ufcw_brand ? "✅ Listed" : "❌ No"}</div>
-          <div class="flag"><strong>Grocery List:</strong> ${item.made_in_ca_list ? "✅ Listed" : "❌ No"}</div>
-          <div class="flag"><strong>Non-Canadian:</strong> ${item.non_canadian_brand ? "✅ Yes" : "❌ No"}</div>
-          <div class="flag"><strong>Canadian Brand:</strong> ${item.canadian_brand ? "✅ Yes" : "❌ No"}</div>
+          ${item.product_of_canada ? `<div class="flag"><strong>Product of Canada:</strong> ✅ Yes</div>` : ""}
+          ${item.made_in_canada ? `<div class="flag"><strong>Made in Canada:</strong> ✅ Yes</div>` : ""}
+          ${item.prepared_in_canada ? `<div class="flag"><strong>Prepared in Canada:</strong> ✅ Yes</div>` : ""}
+          ${item.ufcw_brand ? `<div class="flag"><strong>UFCW Brand:</strong> ✅ Listed</div>` : ""}
+          ${item.made_in_ca_list ? `<div class="flag"><strong>Grocery List:</strong> ✅ Listed</div>` : ""}
+          ${item.canadian_brand ? `<div class="flag"><strong>Canadian Brand:</strong> ✅ Yes</div>` : ""}
+          <div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Yes" : "✅ No"}</div>
         </div>
-        <p class="modal-level"><strong>Rating:</strong>${modalLevel}</p>
+      
+        <p class="modal-level"><strong>Rating:</strong> ${modalLevel}</p>
         <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
         <p><small>Source: UFCW List、Made in Canada Guide</small></p>
-      `;
+    `;
+    
+
+      // modalBody.innerHTML = `
+      //   <h2>${item.title}</h2>
+      //   <img src="${item.productImage}" alt="${item.title}" style="width:100%; max-height:200px; object-fit:contain;">
+
+      //   <div class="modal-info">
+      //     <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
+      //     <p><strong>Category:</strong> ${item.category}</p>
+      //     <p><strong>Country:</strong> ${item.country || "N/A"}</p>
+      //     <p><strong>Description:</strong> ${item.description || "No description available."}</p>
+      //   </div>
+
+      //   <div class="modal-flags">
+      //     <div class="flag"><strong>Product of Canada:</strong> ${item.product_of_canada ? "✅ Yes" : "❌ No"}</div>
+      //     <div class="flag"><strong>Made in Canada:</strong> ${item.made_in_canada ? "✅ Yes" : "❌ No"}</div>
+      //     <div class="flag"><strong>Prepared:</strong> ${item.prepared_in_canada ? "✅ Yes" : "❌ No"}</div>
+      //     <div class="flag"><strong>UFCW Brand:</strong> ${item.ufcw_brand ? "✅ Listed" : "❌ No"}</div>
+      //     <div class="flag"><strong>Grocery List:</strong> ${item.made_in_ca_list ? "✅ Listed" : "❌ No"}</div>
+      //     <div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Yes" : "✅ No"}</div>
+      //     <div class="flag"><strong>Canadian Brand:</strong> ${item.canadian_brand ? "✅ Yes" : "❌ No"}</div>
+      //   </div>
+      //   <p class="modal-level"><strong>Rating:</strong>${modalLevel}</p>
+      //   <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
+      //   <p><small>Source: UFCW List、Made in Canada Guide</small></p>
+      // `;
 
       modal.classList.remove("hidden");
     });
