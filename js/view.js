@@ -1,3 +1,7 @@
+let currentPage = 1;
+const ITEMS_PER_PAGE = 24;
+let currentData = [];
+
 // 通用下拉選單渲染（支援灰色 placeholder）
 export function renderDropdown(selectId, options) {
   const select = document.getElementById(selectId);
@@ -40,68 +44,70 @@ export function renderLoadingSkeleton(count = 15) {
 }
 
 // 商品卡片渲染（支援搜尋關鍵字高亮整張卡片＋點擊顯示詳情）
-export function renderCards(data, keywords = []) {
+export function renderCards(data, keywords = [], reset = true) {
   const container = document.getElementById("productContainer");
-  container.innerHTML = "";
 
-  data.forEach((item) => {
+  if (reset) {
+    container.innerHTML = "";
+    currentPage = 1;
+    const endIndicator = document.getElementById("scroll-end");
+    if (endIndicator) endIndicator.style.display = "none"; // ✅
+  }  
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = currentPage * ITEMS_PER_PAGE;
+  const pageItems = data.slice(startIndex, endIndex);
+
+  if (pageItems.length === 0) {
+    document.getElementById("scroll-end").style.display = "block";
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  pageItems.forEach((item) => {
     const card = document.createElement("div");
     card.className = "card";
 
-    let levelText = "";
-    if (item.rating >= 80) {
-      levelText = "🍁🍁🍁 Very Canadian";
-    } else if (item.rating >= 50) {
-      levelText = "🍁🍁 Somewhat Canadian";
-    } else {
-      levelText = "🍁 Not Very Canadian";
-    }
+    let levelText = item.rating >= 80
+      ? "🍁🍁🍁 Very Canadian"
+      : item.rating >= 50
+      ? "🍁🍁 Somewhat Canadian"
+      : "🍁 Not Very Canadian";
 
     card.innerHTML = `
-      <img src="${item.productImage}" alt="${item.title}" />
+      <img src="${item.productImage}" alt="${item.title}" loading="lazy" />
       <h3>${item.title}</h3>
-
       <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
       <p><strong>Category:</strong> ${item.category}</p>
       <p><strong>Country of Origin:</strong> ${item.country || "N/A"}</p>
-
       ${item.product_of_canada ? `<p><strong>Product of Canada:</strong> ✅ Product of Canada</p>` : ""}
       ${item.made_in_canada ? `<p><strong>Made in Canada:</strong> ✅ Made in Canada</p>` : ""}
       ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
-
       <p class="canadian-level">Rating: ${levelText}</p>
-
-      <p class="canadian-score">
-        🇨🇦 Canadian Score: ${item.rating || "N/A"}
-      </p>
+      <p class="canadian-score">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p>
     `;
 
-    // 點擊卡片 → 開啟詳細 modal
+    // 點擊卡片 → 開啟 modal（保留原本的）
     card.addEventListener("click", () => {
       const modal = document.getElementById("modal");
       const modalBody = document.getElementById("modalBody");
 
-      let modalLevel = "";
-      if (item.rating >= 80) {
-        modalLevel = "🍁🍁🍁 Very Canadian";
-      } else if (item.rating >= 50) {
-        modalLevel = "🍁🍁 Somewhat Canadian";
-      } else {
-        modalLevel = "🍁 Not Very Canadian";
-      }
-      levelText = "🥇 Very Canadian";
+      let modalLevel = item.rating >= 80
+        ? "🍁🍁🍁 Very Canadian"
+        : item.rating >= 50
+        ? "🍁🍁 Somewhat Canadian"
+        : "🍁 Not Very Canadian";
 
       modalBody.innerHTML = `
         <h2>${item.title}</h2>
         <img src="${item.productImage}" alt="${item.title}" style="width:100%; max-height:200px; object-fit:contain;">
-      
         <div class="modal-info">
           <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
           <p><strong>Category:</strong> ${item.category}</p>
           <p><strong>Country:</strong> ${item.country || "N/A"}</p>
           <p><strong>Description:</strong> ${item.description || "No description available."}</p>
         </div>
-      
         <div class="modal-flags">
           ${item.product_of_canada ? `<div class="flag"><strong>Product of Canada:</strong> ✅ Yes</div>` : ""}
           ${item.made_in_canada ? `<div class="flag"><strong>Made in Canada:</strong> ✅ Yes</div>` : ""}
@@ -111,15 +117,41 @@ export function renderCards(data, keywords = []) {
           ${item.canadian_brand ? `<div class="flag"><strong>Canadian Brand:</strong> ✅ Yes</div>` : ""}
           <div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Yes" : "✅ No"}</div>
         </div>
-      
         <p class="modal-level"><strong>Rating:</strong> ${modalLevel}</p>
         <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
         <p><small>Source: UFCW List、Made in Canada Guide</small></p>
-    `;
+      `;
 
       modal.classList.remove("hidden");
     });
 
-    container.appendChild(card);
+    fragment.appendChild(card);    
   });
+
+  container.appendChild(fragment);
+
+  // Store state for infinite scroll
+  let scrollState = document.getElementById("loadMoreState");
+  if (!scrollState) {
+    scrollState = document.createElement("div");
+    scrollState.id = "loadMoreState";
+    scrollState.style.display = "none";
+    document.body.appendChild(scrollState);
+  }
+  scrollState.dataset.fullData = JSON.stringify(data); // ✅
+  scrollState.dataset.keywords = JSON.stringify(keywords);
+}
+
+export function loadMoreCards() {
+  const state = document.getElementById("loadMoreState");
+  if (!state) return;
+
+  currentPage++;
+
+  const data = JSON.parse(state.dataset.fullData || "[]");
+  const keywords = JSON.parse(state.dataset.keywords || "[]");
+
+  console.log("Loading page:", currentPage, "Items:", data.length);
+
+  renderCards(data, keywords, false);
 }
