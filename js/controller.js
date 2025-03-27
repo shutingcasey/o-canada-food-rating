@@ -8,14 +8,18 @@ import {
 import {
   renderDropdown,
   renderCards,
-  renderLoadingSkeleton
+  renderLoadingSkeleton,
+  loadMoreCards  // ✅ 加上這個！
 } from "./view.js";
+
+window.loadMoreCards = loadMoreCards;
 
 import { 
   searchProducts 
 } from "./search.js";
 
 let allData = [];
+let currentData = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
   // 顯示 loading skeleton
@@ -29,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderDropdown("brandFilter", getBrands(allData));
 
   // 顯示所有商品
-  renderCards(allData);
+  renderCards(allData, [], true);
 
   // 監聽篩選下拉選單
   document.getElementById("categoryFilter").addEventListener("change", applyFilter);
@@ -46,9 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (keyword) {
           const results = searchProducts(allData, keyword);
           const keywords = keyword.toLowerCase().split(/\s+/);
-          renderCards(results, keywords);
+          currentData = results;
+          renderCards(currentData, keywords, true);     
         } else {
-          renderCards(allData);
+          currentData = allData;
+          renderCards(currentData, [], true);       
         }
       }, 4000);
     }
@@ -66,9 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (keyword) {
         const results = searchProducts(allData, keyword);
         const keywords = keyword.toLowerCase().split(/\s+/);
-        renderCards(results, keywords);
+        currentData = results;
+        renderCards(currentData, keywords, true);        
       } else {
-        renderCards(allData);
+        currentData = allData;
+        renderCards(currentData, [], true);        
       }
     }, 4000); 
   });
@@ -86,11 +94,46 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+window.addEventListener("scroll", () => {
+  const nearBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+  const state = document.getElementById("loadMoreState");
+  if (nearBottom && state) {
+    loadMoreCards();
+  }
+});
+
+
 // 篩選器邏輯
 function applyFilter() {
-  const selectedCategory = document.getElementById("categoryFilter").value;
-  const selectedBrand = document.getElementById("brandFilter").value;
+  const categoryEl = document.getElementById("categoryFilter");
+  const brandEl = document.getElementById("brandFilter");
 
+  let selectedCategory = categoryEl.value;
+  let selectedBrand = brandEl.value;
+
+  // Default fallback to "All" if one is untouched
+  if (categoryEl.selectedIndex > 0 && brandEl.selectedIndex === 0) {
+    selectedBrand = "All";
+  }
+  if (brandEl.selectedIndex > 0 && categoryEl.selectedIndex === 0) {
+    selectedCategory = "All";
+  }
+
+  // Filter based on selected category & brand
   const filtered = filterData(allData, selectedCategory, selectedBrand);
-  renderCards(filtered);
+
+  // Sort by category A–Z, then by Canadian Score (high → low)
+  const sorted = filtered.sort((a, b) => {
+    const categoryCompare = (a.category || "").localeCompare(b.category || "");
+    if (categoryCompare !== 0) return categoryCompare;
+
+    return (b.rating || 0) - (a.rating || 0);
+  });
+
+  currentData = sorted;
+  renderCards(currentData, [], true);  
 }
+
+
