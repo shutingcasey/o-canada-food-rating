@@ -86,7 +86,7 @@ export function renderCards(data, keywords = [], reset = true) {
       ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
       <p class="canadian-level">Rating: ${levelText}</p>
       <p class="canadian-score">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p>
-      <p><strong>Semantic Score:</strong> ${item.score?.toFixed(4)}</p>
+       ${typeof item.score === "number" ? `<p class="semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
     `;
 
     // 點擊卡片 → 開啟 modal（保留原本的）
@@ -120,8 +120,9 @@ export function renderCards(data, keywords = [], reset = true) {
         </div>
         <p class="modal-level"><strong>Rating:</strong> ${modalLevel}</p>
         <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
+        ${typeof item.score === "number" ? `<p class="modal-semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
         <p><small>Source: UFCW List、Made in Canada Guide</small></p>
-      `;
+      `;     
 
       modal.classList.remove("hidden");
     });

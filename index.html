@@ -20,13 +20,17 @@
 
     <div class="search-bar">
       <input type="text" id="hybridSearchInput" placeholder="Search product..." />
-      <button id="hybridSearchButton">Search</button>
-    
-      <label class="toggle-container">
+      <select id="searchMode" class="styled-select">
+        <option value="keyword">🔤 Keyword</option>
+        <option value="semantic">🧠 Semantic</option>
+        <option value="hybrid">🤖 Hybrid</option>
+      </select> 
+      <button id="hybridSearchButton">Search</button>    
+      <!-- <label class="toggle-container">
         <input type="checkbox" id="useHybridMode" />
         <span class="slider"></span>
         <span class="toggle-label" id="hybridToggleLabel">🤖 Hybrid Mode</span>
-      </label>      
+      </label>       -->
     </div>    
   
   <div class="filter-bar">
