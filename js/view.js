@@ -86,6 +86,7 @@ export function renderCards(data, keywords = [], reset = true) {
       ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
       <p class="canadian-level">Rating: ${levelText}</p>
       <p class="canadian-score">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p>
+      <p><strong>Semantic Score:</strong> ${item.score?.toFixed(4)}</p>
     `;
 
     // 點擊卡片 → 開啟 modal（保留原本的）

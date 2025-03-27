@@ -1,5 +1,5 @@
 export async function loadData() {
-  const res = await fetch("data/data.json");
+  const res = await fetch("data/data_with_embeddings.json");
   const data = await res.json();
   return data;
 }

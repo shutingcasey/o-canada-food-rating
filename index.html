@@ -18,14 +18,16 @@
 
   <div class="main-container">
 
-  <div class="search-bar">
-    <input
-    type="text"
-    id="hybridSearchInput"
-    placeholder="Search by product name"
-    />
-    <button id="hybridSearchButton">AI Search</button>
-  </div>
+    <div class="search-bar">
+      <input type="text" id="hybridSearchInput" placeholder="Search product..." />
+      <button id="hybridSearchButton">Search</button>
+    
+      <label class="toggle-container">
+        <input type="checkbox" id="useHybridMode" />
+        <span class="slider"></span>
+        <span class="toggle-label" id="hybridToggleLabel">🤖 Hybrid Mode</span>
+      </label>      
+    </div>    
   
   <div class="filter-bar">
 

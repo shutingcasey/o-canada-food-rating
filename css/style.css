@@ -131,8 +131,6 @@ header {
   width: 60%;
 }
 
-
-
 #hybridSearchInput {
   padding: 8px 12px;
   border-radius: 8px;
@@ -148,10 +146,32 @@ header {
   border-color: #d32f2f;
 }
 
-/* 搜尋按鈕美化 */
-#hybridSearchButton {
-  padding: 8px 16px;
-  margin-left: 8px;
+/* search-bar 調整間距與排版 */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 24px auto;
+  padding: 0 16px;
+  max-width: 700px;
+}
+
+/* input 保持原樣，限制長度 */
+.search-bar input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* button */
+.search-bar button {
+  padding: 10px 16px;
   border-radius: 8px;
   background-color: #d32f2f;
   color: white;
@@ -159,11 +179,60 @@ header {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
-#hybridSearchButton:hover {
+.search-bar button:hover {
   background-color: #b71c1c;
 }
+
+/* toggle 結構 + emoji */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-container input {
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 2px;
+  top: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-container input:checked + .slider {
+  background-color: #2e7d32;
+}
+
+.toggle-container input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  color: #444;
+  white-space: nowrap;
+}
+
 
 /* 第一行：搜尋欄置中 */
 .search-bar {

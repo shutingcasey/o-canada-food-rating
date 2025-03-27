@@ -9,24 +9,47 @@ import {
   renderDropdown,
   renderCards,
   renderLoadingSkeleton,
-  loadMoreCards  // ✅ 加上這個！
+  loadMoreCards
 } from "./view.js";
+
+import { searchProducts } from "./search.js";
+import { semanticSearchEmbeddingsOnly } from "./semantic_search.js";
+import { hybridSearch } from "./hybrid.js";
 
 window.loadMoreCards = loadMoreCards;
 
-import { 
-  searchProducts 
-} from "./search.js";
+function getEmbeddingsDict(data) {
+  const dict = {};
+  data.forEach((item) => {
+    if (item.embedding) {
+      dict[item.id] = item.embedding;
+    }
+  });
+  return dict;
+}
 
 let allData = [];
 let currentData = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const toggleCheckbox = document.getElementById("useHybridMode");
+  const toggleLabel = document.getElementById("hybridToggleLabel");
+
+  if (toggleCheckbox && toggleLabel) {
+    toggleCheckbox.addEventListener("change", () => {
+      toggleLabel.textContent = toggleCheckbox.checked ? "🤖 Hybrid On" : "🤖 Hybrid Off";
+    });
+  }
+
   // 顯示 loading skeleton
   renderLoadingSkeleton();
 
   // 載入 JSON 資料
   allData = await loadData();
+
+  allData.forEach(item => {
+    item.id = item.productId;
+  });
 
   // 初始化下拉選單
   renderDropdown("categoryFilter", getCategories(allData));
@@ -40,51 +63,84 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("brandFilter").addEventListener("change", applyFilter);
 
   // 監聽 Enter 鍵觸發搜尋
-  document.getElementById("hybridSearchInput").addEventListener("keydown", (event) => {
+  document.getElementById("hybridSearchInput").addEventListener("keydown", async (event) => {
     if (event.key === "Enter") {
       const keyword = event.target.value.trim();
-
+      const useHybrid = document.getElementById("useHybridMode").checked;
+  
       renderLoadingSkeleton();
-
-      setTimeout(() => {
+  
+      setTimeout(async () => {
         if (keyword) {
+          if (useHybrid) {
+            const { queryEmbedding } = await semanticSearchEmbeddingsOnly(allData, keyword);
+            console.log("🔍 Query embedding:", queryEmbedding);
+          
+            const embeddingsDict = getEmbeddingsDict(allData);
+            console.log("🧠 Embeddings Dict Sample:", Object.entries(embeddingsDict).slice(0, 3));
+          
+            const results = hybridSearch(allData, embeddingsDict, keyword, queryEmbedding);
+            console.log("🧪 Hybrid Search Results:", results);
+          
+            const keywords = keyword.toLowerCase().split(/\s+/);
+            currentData = results;
+            renderCards(currentData, keywords, true);
+          } else {
+            const results = searchProducts(allData, keyword);
+            const keywords = keyword.toLowerCase().split(/\s+/);
+            currentData = results;
+            renderCards(currentData, keywords, true);
+          }
+        } else {
+          currentData = allData;
+          renderCards(currentData, [], true);
+        }
+      }, 400);
+    }
+  });
+  
+  // 監聽Search按鈕
+  document.getElementById("hybridSearchButton").addEventListener("click", async () => {
+    const keyword = document.getElementById("hybridSearchInput").value.trim();
+    const useHybrid = document.getElementById("useHybridMode").checked;
+  
+    renderLoadingSkeleton();
+  
+    setTimeout(async () => {
+      if (keyword) {
+        if (useHybrid) {
+          const { queryEmbedding } = await semanticSearchEmbeddingsOnly(allData, keyword);
+          console.log("🔍 Query embedding:", queryEmbedding);
+        
+          const embeddingsDict = getEmbeddingsDict(allData);
+          console.log("🧠 Embeddings Dict Sample:", Object.entries(embeddingsDict).slice(0, 3));
+        
+          const results = hybridSearch(allData, embeddingsDict, keyword, queryEmbedding);
+          console.log("🧪 Hybrid Search Results:", results);
+
+          const keywords = keyword.toLowerCase().split(/\s+/);
+          currentData = results;
+          renderCards(currentData, keywords, true);
+        } else {
           const results = searchProducts(allData, keyword);
           const keywords = keyword.toLowerCase().split(/\s+/);
           currentData = results;
-          renderCards(currentData, keywords, true);     
-        } else {
-          currentData = allData;
-          renderCards(currentData, [], true);       
+          renderCards(currentData, keywords, true);
         }
-      }, 4000);
-    }
-  });
-
-  // 監聽 Hybrid 搜尋按鈕
-  document.getElementById("hybridSearchButton").addEventListener("click", () => {
-    const keyword = document.getElementById("hybridSearchInput").value.trim();
-
-    // Step 1：先顯示假卡片
-    renderLoadingSkeleton();
-
-    // Step 2：延遲再進行搜尋與渲染
-    setTimeout(() => {
-      if (keyword) {
-        const results = searchProducts(allData, keyword);
-        const keywords = keyword.toLowerCase().split(/\s+/);
-        currentData = results;
-        renderCards(currentData, keywords, true);        
       } else {
         currentData = allData;
-        renderCards(currentData, [], true);        
+        renderCards(currentData, [], true);
       }
-    }, 4000); 
+    }, 400);
   });
-
+  
   // 產品Detail  關閉邏輯-關閉按鈕
-  document.getElementById("modalClose").addEventListener("click", () => {
-    document.getElementById("modal").classList.add("hidden");
-  });
+  const modalClose = document.getElementById("modalClose");
+  if (modalClose) {
+    modalClose.addEventListener("click", () => {
+      document.getElementById("modal").classList.add("hidden");
+    });
+  }  
 
   // 產品Detail 關閉邏輯-點擊背景區域
   document.getElementById("modal").addEventListener("click", (e) => {
