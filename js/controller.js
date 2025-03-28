@@ -8,77 +8,60 @@ import {
 import {
   renderDropdown,
   renderCards,
-  renderLoadingSkeleton
+  renderLoadingSkeleton,
+  loadMoreCards
 } from "./view.js";
 
-import { 
-  searchProducts 
-} from "./search.js";
+import { searchProducts } from "./search.js";
+import { semanticSearchEmbeddingsOnly } from "./semantic_search.js";
+import { hybridSearch } from "./hybrid.js";
+import { cosineSimilarity } from "./utils/cosine.js";
+
+window.loadMoreCards = loadMoreCards;
+
+function getEmbeddingsDict(data) {
+  const dict = {};
+  data.forEach((item) => {
+    if (item.embedding) {
+      dict[item.id] = item.embedding;
+    }
+  });
+  return dict;
+}
 
 let allData = [];
+let currentData = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // 顯示 loading skeleton
   renderLoadingSkeleton();
-
-  // 載入 JSON 資料
   allData = await loadData();
+  allData.forEach(item => {
+    item.id = item.productId;
+  });
 
-  // 初始化下拉選單
   renderDropdown("categoryFilter", getCategories(allData));
   renderDropdown("brandFilter", getBrands(allData));
 
-  // 顯示所有商品
-  renderCards(allData);
+  renderCards(allData, [], true);
 
-  // 監聽篩選下拉選單
   document.getElementById("categoryFilter").addEventListener("change", applyFilter);
   document.getElementById("brandFilter").addEventListener("change", applyFilter);
 
-  // 監聽 Enter 鍵觸發搜尋
-  document.getElementById("hybridSearchInput").addEventListener("keydown", (event) => {
+  document.getElementById("hybridSearchInput").addEventListener("keydown", async (event) => {
     if (event.key === "Enter") {
-      const keyword = event.target.value.trim();
-
-      renderLoadingSkeleton();
-
-      setTimeout(() => {
-        if (keyword) {
-          const results = searchProducts(allData, keyword);
-          const keywords = keyword.toLowerCase().split(/\s+/);
-          renderCards(results, keywords);
-        } else {
-          renderCards(allData);
-        }
-      }, 4000);
+      await handleSearch();
     }
   });
 
-  // 監聽 Hybrid 搜尋按鈕
-  document.getElementById("hybridSearchButton").addEventListener("click", () => {
-    const keyword = document.getElementById("hybridSearchInput").value.trim();
+  document.getElementById("hybridSearchButton").addEventListener("click", handleSearch);
 
-    // Step 1：先顯示假卡片
-    renderLoadingSkeleton();
+  const modalClose = document.getElementById("modalClose");
+  if (modalClose) {
+    modalClose.addEventListener("click", () => {
+      document.getElementById("modal").classList.add("hidden");
+    });
+  }
 
-    // Step 2：延遲再進行搜尋與渲染
-    setTimeout(() => {
-      if (keyword) {
-        const results = searchProducts(allData, keyword);
-        const keywords = keyword.toLowerCase().split(/\s+/);
-        renderCards(results, keywords);
-      } else {
-        renderCards(allData);
-      }
-    }, 4000); 
-  });
-
-  // 產品Detail  關閉邏輯-關閉按鈕
-  document.getElementById("modalClose").addEventListener("click", () => {
-    document.getElementById("modal").classList.add("hidden");
-  });
-
-  // 產品Detail 關閉邏輯-點擊背景區域
   document.getElementById("modal").addEventListener("click", (e) => {
     if (e.target.id === "modal") {
       document.getElementById("modal").classList.add("hidden");
@@ -86,11 +69,101 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// 篩選器邏輯
+window.addEventListener("scroll", () => {
+  const nearBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+  const state = document.getElementById("loadMoreState");
+  if (nearBottom && state) {
+    loadMoreCards();
+  }
+});
+
+// 搜尋邏輯統一化
+async function handleSearch() {
+  const keyword = document.getElementById("hybridSearchInput").value.trim();
+  const searchMode = document.getElementById("searchMode").value;
+
+  renderLoadingSkeleton();
+
+  setTimeout(async () => {
+    if (keyword) {
+      const keywords = keyword.toLowerCase().split(/\s+/);
+
+      if (searchMode === "semantic") {
+        const { queryEmbedding } = await semanticSearchEmbeddingsOnly(allData, keyword);
+        console.log("🔍 Query embedding:", queryEmbedding);
+
+        const results = allData
+          .filter(item => item.embedding)
+          .map(item => ({
+            ...item,
+            score: cosineSimilarity(queryEmbedding, item.embedding)
+          }))
+          .sort((a, b) => b.score - a.score);
+
+        console.log("🧠 Semantic Search Results:", results);
+        currentData = results;
+        renderCards(currentData, [], true);
+
+      } else if (searchMode === "hybrid") {
+        const { queryEmbedding } = await semanticSearchEmbeddingsOnly(allData, keyword);
+        console.log("🔍 Query embedding:", queryEmbedding);
+
+        const embeddingsDict = getEmbeddingsDict(allData);
+        console.log("🧠 Embeddings Dict Sample:", Object.entries(embeddingsDict).slice(0, 3));
+
+        const results = allData
+          .filter(item => item.embedding && embeddingsDict[item.id])
+          .map(item => {
+            const sim = cosineSimilarity(queryEmbedding, embeddingsDict[item.id]);
+            const normalizedRating = (item.rating || 0) / 100;
+            const hybridScore = 0.5 * sim + 0.5 * normalizedRating;
+            return {
+              ...item,
+              score: hybridScore
+            };
+          })
+          .sort((a, b) => b.score - a.score);
+
+        console.log("🤖 Hybrid Search Results (Sorted by Hybrid Score):", results);
+        currentData = results;
+        renderCards(currentData, keywords, true);
+
+      } else {
+        const results = searchProducts(allData, keyword);
+        console.log("🔎 Keyword Search Results:", results);
+        currentData = results;
+        renderCards(currentData, keywords, true);
+      }
+    } else {
+      currentData = allData;
+      renderCards(currentData, [], true);
+    }
+  }, 400);
+}
+
 function applyFilter() {
-  const selectedCategory = document.getElementById("categoryFilter").value;
-  const selectedBrand = document.getElementById("brandFilter").value;
+  const categoryEl = document.getElementById("categoryFilter");
+  const brandEl = document.getElementById("brandFilter");
+
+  let selectedCategory = categoryEl.value;
+  let selectedBrand = brandEl.value;
+
+  if (categoryEl.selectedIndex > 0 && brandEl.selectedIndex === 0) {
+    selectedBrand = "All";
+  }
+  if (brandEl.selectedIndex > 0 && categoryEl.selectedIndex === 0) {
+    selectedCategory = "All";
+  }
 
   const filtered = filterData(allData, selectedCategory, selectedBrand);
-  renderCards(filtered);
+  const sorted = filtered.sort((a, b) => {
+    const categoryCompare = (a.category || "").localeCompare(b.category || "");
+    if (categoryCompare !== 0) return categoryCompare;
+    return (b.rating || 0) - (a.rating || 0);
+  });
+
+  currentData = sorted;
+  renderCards(currentData, [], true);
 }

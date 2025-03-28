@@ -18,14 +18,20 @@
 
   <div class="main-container">
 
-  <div class="search-bar">
-    <input
-    type="text"
-    id="hybridSearchInput"
-    placeholder="Search by product name"
-    />
-    <button id="hybridSearchButton">AI Search</button>
-  </div>
+    <div class="search-bar">
+      <input type="text" id="hybridSearchInput" placeholder="Search product..." />
+      <select id="searchMode" class="styled-select">
+        <option value="keyword">🔍Keyword</option>
+        <option value="semantic">🧠Semantic</option>
+        <option value="hybrid">🤖Hybrid</option>
+      </select> 
+      <button id="hybridSearchButton">Search</button>    
+      <!-- <label class="toggle-container">
+        <input type="checkbox" id="useHybridMode" />
+        <span class="slider"></span>
+        <span class="toggle-label" id="hybridToggleLabel">🤖 Hybrid Mode</span>
+      </label>       -->
+    </div>    
   
   <div class="filter-bar">
 
@@ -41,6 +47,8 @@
   <section id="productContainer" class="card-container"></section>
 
  </div>
+
+ <div id="scroll-end" style="text-align:center; margin:1rem; display:none;">No more results.</div>
  
  <div id="modal" class="modal hidden">
   <div class="modal-content">
