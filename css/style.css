@@ -196,8 +196,8 @@ header {
   justify-content: center;
   align-items: center;
   gap: 12px;
-  margin: 32px 0 24px;
-  padding: 0 16px;
+  margin: 0px 0 24px 0;
+  padding-left: 135px; 
 }
 
 .card p.canadian-score {
@@ -358,4 +358,26 @@ header {
   outline: none;
   border-color: #007BFF;
   box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+}
+
+.scanner-box {
+  width: 300px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.scanner-button {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: block;
+  margin: 20px;
+  transition: transform 0.2s ease;
+}
+
+.scanner-button:hover {
+  transform: scale(1.1);
 }
