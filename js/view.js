@@ -51,7 +51,7 @@ export function renderCards(data, keywords = [], reset = true) {
     container.innerHTML = "";
     currentPage = 1;
     const endIndicator = document.getElementById("scroll-end");
-    if (endIndicator) endIndicator.style.display = "none"; // ✅
+    if (endIndicator) endIndicator.style.display = "none";
   }  
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -86,10 +86,9 @@ export function renderCards(data, keywords = [], reset = true) {
       ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
       <p class="canadian-level">Rating: ${levelText}</p>
       <p class="canadian-score">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p>
-       ${typeof item.score === "number" ? `<p class="semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
+      ${typeof item.score === "number" ? `<p class="semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
     `;
 
-    // 點擊卡片 → 開啟 modal（保留原本的）
     card.addEventListener("click", () => {
       const modal = document.getElementById("modal");
       const modalBody = document.getElementById("modalBody");
@@ -114,15 +113,14 @@ export function renderCards(data, keywords = [], reset = true) {
           ${item.made_in_canada ? `<div class="flag"><strong>Made in Canada:</strong> ✅ Yes</div>` : ""}
           ${item.prepared_in_canada ? `<div class="flag"><strong>Prepared in Canada:</strong> ✅ Yes</div>` : ""}
           ${item.ufcw_brand ? `<div class="flag"><strong>UFCW Brand:</strong> ✅ Listed</div>` : ""}
-          ${item.made_in_ca_list ? `<div class="flag"><strong>Grocery List:</strong> ✅ Listed</div>` : ""}
           ${item.canadian_brand ? `<div class="flag"><strong>Canadian Brand:</strong> ✅ Yes</div>` : ""}
-          <div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Yes" : "✅ No"}</div>
+          ${!item.canadian_brand ? `<div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Not Canadian" : "✅ Canadian"}</div>` : ""}
         </div>
         <p class="modal-level"><strong>Rating:</strong> ${modalLevel}</p>
         <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
         ${typeof item.score === "number" ? `<p class="modal-semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
         <p><small>Source: UFCW List、Made in Canada Guide</small></p>
-      `;     
+      `;
 
       modal.classList.remove("hidden");
     });
@@ -132,7 +130,6 @@ export function renderCards(data, keywords = [], reset = true) {
 
   container.appendChild(fragment);
 
-  // Store state for infinite scroll
   let scrollState = document.getElementById("loadMoreState");
   if (!scrollState) {
     scrollState = document.createElement("div");
@@ -140,7 +137,7 @@ export function renderCards(data, keywords = [], reset = true) {
     scrollState.style.display = "none";
     document.body.appendChild(scrollState);
   }
-  scrollState.dataset.fullData = JSON.stringify(data); // ✅
+  scrollState.dataset.fullData = JSON.stringify(data);
   scrollState.dataset.keywords = JSON.stringify(keywords);
 }
 
