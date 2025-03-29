@@ -3,6 +3,7 @@
     "cosine-similarity": "^1.0.1",
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
+    "html5-qrcode": "^2.3.8",
     "openai": "^4.89.1"
   },
   "name": "o-canada-food-rating",
