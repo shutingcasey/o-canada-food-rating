@@ -52,7 +52,7 @@ export function renderCards(data, keywords = [], reset = true) {
     currentPage = 1;
     const endIndicator = document.getElementById("scroll-end");
     if (endIndicator) endIndicator.style.display = "none";
-  }  
+  }
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = currentPage * ITEMS_PER_PAGE;
@@ -75,17 +75,24 @@ export function renderCards(data, keywords = [], reset = true) {
       ? "🍁🍁 Somewhat Canadian"
       : "🍁 Not Very Canadian";
 
+    const scoreBar = item.rating ? `
+      <div style="background-color: #ddd; height: 20px; width: 100%; border-radius: 10px; overflow: hidden; margin: 8px 0;">
+        <div style="height: 100%; width: ${item.rating}%; background-color: hsl(${120 - (item.rating * 1.2)}, 70%, 50%);"></div>
+      </div>
+    ` : "";
+
     card.innerHTML = `
       <img src="${item.productImage}" alt="${item.title}" loading="lazy" />
       <h3>${item.title}</h3>
+      ${scoreBar}
+      <p class="canadian-score" style="color: #d32f2f; font-size: 1.3rem; font-weight: bold;">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p> 
+      <p class="canadian-level" style="font-size: 1.1rem; font-weight: bold;">${levelText}</p>
       <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
       <p><strong>Category:</strong> ${item.category}</p>
       <p><strong>Country of Origin:</strong> ${item.country || "N/A"}</p>
       ${item.product_of_canada ? `<p><strong>Product of Canada:</strong> ✅ Product of Canada</p>` : ""}
       ${item.made_in_canada ? `<p><strong>Made in Canada:</strong> ✅ Made in Canada</p>` : ""}
       ${item.prepared_in_canada ? `<p><strong>Prepared in Canada:</strong> ✅ Prepared in Canada</p>` : ""}
-      <p class="canadian-level">Rating: ${levelText}</p>
-      <p class="canadian-score">🇨🇦 Canadian Score: ${item.rating || "N/A"}</p>
       ${typeof item.score === "number" ? `<p class="semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
     `;
 
@@ -99,9 +106,18 @@ export function renderCards(data, keywords = [], reset = true) {
         ? "🍁🍁 Somewhat Canadian"
         : "🍁 Not Very Canadian";
 
+      const modalScoreBar = item.rating ? `
+        <div style="background-color: #ddd; height: 20px; width: 100%; border-radius: 10px; overflow: hidden; margin: 8px 0;">
+          <div style="height: 100%; width: ${item.rating}%; background-color: hsl(${120 - (item.rating * 1.2)}, 70%, 50%);"></div>
+        </div>
+      ` : "";
+
       modalBody.innerHTML = `
         <h2>${item.title}</h2>
         <img src="${item.productImage}" alt="${item.title}" style="width:100%; max-height:200px; object-fit:contain;">
+        ${modalScoreBar}
+        <p class="modal-score" style="color: #d32f2f;"><strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
+        <p class="modal-level"><strong>${modalLevel}</strong></p>
         <div class="modal-info">
           <p><strong>Brand:</strong> ${item.brand || "Unknown"}</p>
           <p><strong>Category:</strong> ${item.category}</p>
@@ -114,10 +130,8 @@ export function renderCards(data, keywords = [], reset = true) {
           ${item.prepared_in_canada ? `<div class="flag"><strong>Prepared in Canada:</strong> ✅ Yes</div>` : ""}
           ${item.ufcw_brand ? `<div class="flag"><strong>UFCW Brand:</strong> ✅ Listed</div>` : ""}
           ${item.canadian_brand ? `<div class="flag"><strong>Canadian Brand:</strong> ✅ Yes</div>` : ""}
-          ${!item.canadian_brand ? `<div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Not Canadian" : "✅ Canadian"}</div>` : ""}
+          ${!item.canadian_brand ? `<div class="flag"><strong>Non-Canadian Brand:</strong> ${item.non_canadian_brand ? "⚠️ Yes" : "✅ No"}</div>` : ""}
         </div>
-        <p class="modal-level"><strong>Rating:</strong> ${modalLevel}</p>
-        <p class="modal-score">🇨🇦 <strong>Canadian Score:</strong> ${item.rating || "N/A"}/100</p>
         ${typeof item.score === "number" ? `<p class="modal-semantic-score"><small><strong>Semantic Score:</strong> ${item.score.toFixed(4)}</small></p>` : ""}
         <p><small>Source: UFCW List、Made in Canada Guide</small></p>
       `;
@@ -125,7 +139,7 @@ export function renderCards(data, keywords = [], reset = true) {
       modal.classList.remove("hidden");
     });
 
-    fragment.appendChild(card);    
+    fragment.appendChild(card);
   });
 
   container.appendChild(fragment);
