@@ -242,11 +242,18 @@ header {
     padding: 0 12px;
   }
 
-  .search-bar,
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 12px;
+    margin-bottom: 0px;
+  }
+
   .filter-bar {
     flex-direction: column;
     align-items: stretch;
     padding: 0 12px;
+    margin-top: 0px;
   }
 
   .search-bar input[type="text"],
@@ -374,7 +381,7 @@ header {
   height: 40px;
   cursor: pointer;
   display: block;
-  margin: 20px;
+  margin: 15px auto;
   transition: transform 0.2s ease;
 }
 
