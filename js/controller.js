@@ -64,40 +64,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  let isScannerActive = false;
+
   document.getElementById("startScanner").addEventListener("click", async () => {
     const scannerContainer = document.getElementById("reader");
-
-    const scanTimeout = setTimeout(() => {
-      alert("⏰ No activity detected. Please try scanning again.");
-      html5QrCode.stop().catch(err => {
+  
+    if (!isScannerActive) {
+      isScannerActive = true;
+      document.getElementById("startScanner").textContent = "📴 Stop Scanner";
+  
+      scanTimeout = setTimeout(() => {
+        alert("⏰ No activity detected. Stopping scanner.");
+        html5QrCode.stop().then(() => {
+          isScannerActive = false;
+          document.getElementById("startScanner").textContent = "📷 Start Scanner";
+        }).catch(err => {
+          console.error("⚠️ Failed to stop scanner:", err);
+        });
+      }, 10000);
+  
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText, decodedResult) => {
+          clearTimeout(scanTimeout);
+          console.log("🔍 Scanned UPC:", decodedText);
+  
+          const matched = allData.filter(item => item.upc === decodedText);
+  
+          if (matched.length > 0) {
+            alert(`✅ Found: ${matched[0].title}`);
+            currentData = matched;
+            renderCards(currentData, [], true);
+          } else {
+            alert("🚫 No product found for this UPC.");
+            console.log("item.upc:", item.upc, typeof item.upc);
+            console.log("decodedText:", decodedText, typeof decodedText);
+          }
+  
+          html5QrCode.stop().then(() => {
+            isScannerActive = false;
+            document.getElementById("startScanner").textContent = "📷 Start Scanner";
+          });
+        },
+        (errorMessage) => {
+          // silent fail (optional log)
+        }
+      ).catch((err) => {
+        console.error("⚠️ Scanner start failed:", err);
+        isScannerActive = false;
+        document.getElementById("startScanner").textContent = "📷 Start Scanner";
+      });
+  
+    } else {
+      clearTimeout(scanTimeout);
+      html5QrCode.stop().then(() => {
+        isScannerActive = false;
+        document.getElementById("startScanner").textContent = "📷 Start Scanner";
+      }).catch(err => {
         console.error("⚠️ Failed to stop scanner:", err);
       });
-    }, 10000);
-
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      (decodedText, decodedResult) => {
-        clearTimeout(scanTimeout);
-        console.log("🔍 Scanned UPC:", decodedText);
-
-        const matched = allData.filter(item => item.upc === decodedText);
-
-        if (matched.length > 0) {
-          alert(`✅ Found: ${matched[0].title}`);
-          currentData = matched;
-          renderCards(currentData, [], true);
-        } else {
-          alert("🚫 No product found for this UPC.");
-          console.log("item.upc:", item.upc, typeof item.upc);
-          console.log("decodedText:", decodedText, typeof decodedText);
-        }
-        html5QrCode.stop();
-      },
-      (errorMessage) => {}
-    ).catch((err) => {
-      console.error("⚠️ Scanner start failed:", err);
-    });
+    }
   });
 
   document.getElementById("modal").addEventListener("click", (e) => {
