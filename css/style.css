@@ -381,7 +381,7 @@ header {
   height: 40px;
   cursor: pointer;
   display: block;
-  margin: 15px auto;
+  margin: 10px;
   transition: transform 0.2s ease;
 }
 
