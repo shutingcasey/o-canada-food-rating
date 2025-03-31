@@ -22,8 +22,7 @@
       <input type="text" id="hybridSearchInput" placeholder="Search product..." />
       <select id="searchMode" class="styled-select">
         <option value="keyword">🔍Keyword</option>
-        <option value="semantic">🧠Semantic</option>
-        <option value="hybrid">🤖Hybrid</option>
+        <option value="hybrid">🤖AI</option>
       </select> 
       <button id="hybridSearchButton">Search</button>    
       <!-- <label class="toggle-container">
@@ -31,7 +30,12 @@
         <span class="slider"></span>
         <span class="toggle-label" id="hybridToggleLabel">🤖 Hybrid Mode</span>
       </label>       -->
-    </div>    
+      <img src="images/scan.png" id="startScanner" class="scanner-button" alt="Scan" />
+      <div id="reader" class="scanner-box"></div>
+      <!-- 064420255013 -->
+
+    </div>
+
   
   <div class="filter-bar">
 
@@ -58,6 +62,7 @@
 </div>
 
   <!-- 主控制腳本 -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <script type="module" src="js/controller.js"></script>
   
 </body>

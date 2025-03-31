@@ -18,6 +18,8 @@ import { hybridSearch } from "./hybrid.js";
 import { cosineSimilarity } from "./utils/cosine.js";
 
 window.loadMoreCards = loadMoreCards;
+const html5QrCode = new Html5Qrcode("reader");
+let scanTimeout;
 
 function getEmbeddingsDict(data) {
   const dict = {};
@@ -61,6 +63,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("modal").classList.add("hidden");
     });
   }
+
+  document.getElementById("startScanner").addEventListener("click", async () => {
+    const scannerContainer = document.getElementById("reader");
+
+    const scanTimeout = setTimeout(() => {
+      alert("⏰ No activity detected. Please try scanning again.");
+      html5QrCode.stop().catch(err => {
+        console.error("⚠️ Failed to stop scanner:", err);
+      });
+    }, 10000);
+
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      (decodedText, decodedResult) => {
+        clearTimeout(scanTimeout);
+        console.log("🔍 Scanned UPC:", decodedText);
+
+        const matched = allData.filter(item => item.upc === decodedText);
+
+        if (matched.length > 0) {
+          alert(`✅ Found: ${matched[0].title}`);
+          currentData = matched;
+          renderCards(currentData, [], true);
+        } else {
+          alert("🚫 No product found for this UPC.");
+          console.log("item.upc:", item.upc, typeof item.upc);
+          console.log("decodedText:", decodedText, typeof decodedText);
+        }
+        html5QrCode.stop();
+      },
+      (errorMessage) => {}
+    ).catch((err) => {
+      console.error("⚠️ Scanner start failed:", err);
+    });
+  });
 
   document.getElementById("modal").addEventListener("click", (e) => {
     if (e.target.id === "modal") {
